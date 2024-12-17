@@ -132,4 +132,19 @@ public class RedisTests {
         System.out.println(obj);
     }
 
+    @Test
+    public void testGuanzhuFensiAddData() {
+        String redisKey = "follower:3:156";
+
+        redisTemplate.opsForZSet().add(redisKey, 11, System.currentTimeMillis());
+        redisTemplate.opsForZSet().add(redisKey, 12, System.currentTimeMillis() + 100);
+        redisTemplate.opsForZSet().add(redisKey, 13, System.currentTimeMillis() + 100);
+        redisTemplate.opsForZSet().add(redisKey, 21, System.currentTimeMillis() + 100);
+        redisTemplate.opsForZSet().add(redisKey, 23, System.currentTimeMillis() + 100);
+        redisTemplate.opsForZSet().add(redisKey, 101, System.currentTimeMillis() + 100);
+        redisTemplate.opsForZSet().add(redisKey, 102, System.currentTimeMillis() + 100);
+        redisTemplate.opsForZSet().add(redisKey, 103, System.currentTimeMillis() + 100);
+        redisTemplate.opsForZSet().add(redisKey, 103, System.currentTimeMillis() + 100);
+    }
+
 }
