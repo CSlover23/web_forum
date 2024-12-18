@@ -101,6 +101,13 @@
 <!--			<version>3.4.0</version>-->
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+<!--			<version>3.3.1</version>--> <!--补充知识：导入依赖快捷键 ctrl+shift+O-->
+		</dependency>
+
+
 
 
 	</dependencies>
