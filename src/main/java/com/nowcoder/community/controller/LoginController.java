@@ -7,6 +7,7 @@ import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.RedisKeyUtil;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -43,6 +46,11 @@ public class LoginController implements CommunityConstant {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    // 在 LoginController 里注入 securityContextLogoutHandler
+    /*新补充（下面2行代码，20241223）：参考自https://blog.csdn.net/qq_17224327/article/details/131384301*/
+    @Autowired
+    private SecurityContextLogoutHandler securityContextLogoutHandler;
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
@@ -157,10 +165,24 @@ public class LoginController implements CommunityConstant {
         }
     }
 
+
+    // 下面的注释部分的函数调整为下面的非注释函数logout
+    /*参考自https://blog.csdn.net/qq_17224327/article/details/131384301*/
+    /**在退出的时候也只是清理了 SecurityContextHolder，而认证信息已经存在了 session 里，没有被清理(securityContextRepository是基于session 的).
+     * 在自定义的 logout 功能里调用 LogoutHandler 彻底地清理授权信息。
+     * 参考文档地址：https://docs.spring.io/spring-security/reference/servlet/authentication/logout.html#creating-custom-logout-endpoint*/
+//    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+//    public String logout(@CookieValue("ticket") String ticket) {
+//        userService.logout(ticket);
+//        SecurityContextHolder.clearContext();
+//        return "redirect:/login";
+//    }
     @RequestMapping(path = "/logout", method = RequestMethod.GET)
-    public String logout(@CookieValue("ticket") String ticket) {
+    public String logout(@CookieValue("ticket") String ticket, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         userService.logout(ticket);
-        SecurityContextHolder.clearContext();
+
+        securityContextLogoutHandler.logout(request, response, authentication);
+
         return "redirect:/login";
     }
 
