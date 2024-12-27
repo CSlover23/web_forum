@@ -42,7 +42,7 @@ public class HomeController implements CommunityConstant {
         page.setPath("/index?orderMode=" + orderMode);
 
          List<DiscussPost> list = discussPostService
-                 .findDiscussPost(0, page.getOffset(), page.getLimit(), orderMode);
+                 .findDiscussPosts(0, page.getOffset(), page.getLimit(), orderMode);
         List<Map<String, Object>> discussPosts = new ArrayList<>();
         if (list != null) {
             for (DiscussPost post: list) {
